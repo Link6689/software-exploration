@@ -234,7 +234,7 @@
 .se-cat-feat .se-cat-ic { background: var(--lime); color: var(--on-lime); }
 
 /* DealCard */
-.se-deal { padding: var(--space-5); display: grid; gap: var(--space-3); }
+.se-deal { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
 .se-deal-off { font-family: var(--font-display); font-size: 30px; line-height: 34px; font-weight: 800; color: var(--cta); }
 
 /* ArticleCard */
@@ -365,13 +365,20 @@
   .se-alt-hero { grid-template-columns: 1fr; }
 }
 @container (max-width: 560px) {
-  .se-g2, .se-g3, .se-g4, .se-proscons, .se-vs, .se-rr-sum { grid-template-columns: 1fr; }
+  .se-g2, .se-g3, .se-g4, .se-proscons, .se-rr-sum { grid-template-columns: 1fr; }
+  .se-vs { grid-template-columns: 1fr 1fr; gap: var(--space-3); position: relative; }
+  .se-vs-mid { position: absolute; left: 50%; top: 64px; transform: translateX(-50%); z-index: 1; padding: 0; }
+  .se-vs-disc { width: 40px; height: 40px; font-size: 14px; box-shadow: 0 0 0 4px var(--paper); }
+  .se-vs-side { padding: var(--space-4) var(--space-3); gap: var(--space-2); }
+  .se-vs-side .se-logo { width: 48px !important; height: 48px !important; font-size: 20px !important; }
+  .se-vs-side .se-h2 { font-size: 20px; line-height: 26px; }
+  .se-vs-side .se-score-lg { font-size: 20px; line-height: 24px; padding: 8px 10px; min-width: 0; }
+  .se-vs-if { font-size: 13px; line-height: 19px; }
+  .se-vs-side .se-btn { width: 100%; font-size: 13px; padding: 8px 10px; white-space: normal; }
   .se-cats { grid-template-columns: 1fr 1fr; gap: var(--space-3); }
   .se-cats .se-cat { min-height: 0; padding: var(--space-4); gap: var(--space-3); }
   .se-cats .se-cat-ic { width: 32px; height: 32px; }
   .se-ranked-compact .se-badge { display: none; }
-  .se-vs-side { padding: var(--space-5) var(--space-4); }
-  .se-vs-mid { padding: 0; }
   .se-ranked { grid-template-columns: 1fr; gap: var(--space-3); }
   .se-ranked-side { grid-template-columns: 1fr; }
   .se-ranked-compact { grid-template-columns: 28px 40px minmax(0, 1fr) auto; gap: var(--space-3); }
