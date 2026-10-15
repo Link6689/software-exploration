@@ -18,6 +18,10 @@
   --theme-palette-color-8: var(--surface);
   --theme-text-color: var(--ink);
   --theme-headings-color: var(--ink);
+  --theme-heading-color: var(--ink);
+  --theme-form-field-border-initial-color: var(--line-strong);
+  --theme-form-field-border-focus-color: var(--brand);
+  --theme-form-field-border-radius: var(--radius-sm);
   --theme-link-initial-color: var(--brand);
   --theme-link-hover-color: var(--ink);
   --theme-border-color: var(--line);

@@ -89,10 +89,13 @@ function se_rating_fields_html() {
 		. '<p class="se-field"><label class="se-ui" for="se-uses">' . esc_html( se_t( 'used_for' ) ) . '</label><select class="se-input" name="se_uses" id="se-uses">' . $opts . '</select></p>';
 }
 
-add_filter(
-	'comment_form_field_comment',
-	function ( $field ) {
-		return se_is_review() ? se_rating_fields_html() . $field : $field;
+// At the top of the form, so themes that reorder the fields (Blocksy does) keep the rating first.
+add_action(
+	'comment_form_top',
+	function () {
+		if ( se_is_review() ) {
+			echo se_rating_fields_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts.
+		}
 	}
 );
 

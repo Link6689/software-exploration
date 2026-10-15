@@ -34,9 +34,12 @@ Le design system complet (gabarits, composants, règles) est publié en artefact
   1 `#0e5a48` · 2 `#121c18` · 3 `#121c18` · 4 `#121c18` · 5 `#d9d5c8` · 6 `#ebe8de` · 7 `#f5f3ec` · 8 `#ffffff`.
 - *Typographie* : laisser « Instrument Sans » pour le texte et « Bricolage Grotesque » pour les titres ; les fichiers sont fournis par le thème (aucun appel à Google Fonts, conforme RGPD).
 - *En-tête* (constructeur d’en-tête) :
-  - logo : ajouter un élément **HTML** contenant `[se_wordmark]` (logo + nom, lien vers l’accueil de la langue courante) ;
-  - menu : IA, SEO, Marketing, Comparatifs, Alternatives, Bons plans, Guides (un menu par langue avec Polylang) ;
-  - sélecteur de langue : élément **HTML** contenant `[se_lang_switch]`.
+  - logo : retirer l’élément « Logo » et glisser à sa place un élément **HTML** contenant `[se_wordmark]` (logo + nom, lien vers l’accueil de la langue courante) ;
+  - menu : IA, SEO, Marketing, Comparatifs, Alternatives, Bons plans, Guides — créer un menu par langue (*Apparence → Menus*, Polylang propose un emplacement par langue) ;
+  - sélecteur de langue : ajouter un **second élément HTML** (bouton « dupliquer » de l’élément HTML) contenant `[se_lang_switch]`, à droite du menu ;
+  - sur mobile, mettre aussi `[se_wordmark]` à la place du logo.
+- *Articles → Article seul → Titre de la publication* : désactiver l’élément **Méta de l’article** (auteur, date, catégorie), sinon il fait doublon avec le bloc *Author and dates* des compositions.
+- *Articles → Article seul → Commentaires* : désactiver le champ **Site web** (il n’attire que du spam sur un site d’avis).
 - *Articles* : barre latérale à droite pour les tests (y placer le bloc *Verdict box* en mode compact et le sommaire Rank Math). Pages « classement », « comparatif » et accueil : structure **pleine largeur** sans barre latérale.
 - Favicon : *Personnaliser → Identité du site → Icône* avec `wordpress/themes/software-exploration/assets/img/se-mark.svg` (en attendant, le thème l’affiche automatiquement).
 
@@ -95,6 +98,4 @@ add_filter( 'se_reviews_output_schema', '__return_false' );
 
 ### Ce qui a été testé
 
-Sur un WordPress 7.2 (version de développement) local avec SQLite et Polylang : création des fiches, toutes les compositions en anglais et en français, rendu public sur ordinateur (1280 px) et mobile (390 px), éditeur de blocs (insertion, réglages, aperçu en direct), dépôt d’un avis noté par un visiteur, modification d’une fiche, redirection `/go/…`.
-
-**Non testé : Blocksy lui-même**, qui n’était pas téléchargeable depuis l’environnement de test (un thème parent minimal l’a remplacé). Les correspondances de couleurs avec Blocksy (`--theme-palette-color-…`) et le rendu du constructeur d’en-tête sont à vérifier lors de la première installation.
+Sur un WordPress 7.1.3 local (SQLite) avec **Blocksy 2.1.59**, Blocksy Companion et Polylang 3.9 : création des fiches, toutes les compositions en anglais et en français, rendu public sur ordinateur (1280 px) et mobile (390 px), en-tête Blocksy configuré comme ci-dessus (`[se_wordmark]` et `[se_lang_switch]` dans des éléments HTML), éditeur de blocs (insertion, réglages, aperçu en direct), dépôt d’un avis noté par un visiteur, modification d’une fiche, redirection `/go/…`.

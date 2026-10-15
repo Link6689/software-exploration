@@ -305,6 +305,14 @@
 @media (max-width: 640px) { .se-rr-sum { grid-template-columns: 1fr; } .se-rr-ours { border-left: 0; padding-left: 0; justify-items: start; } }
 
 /* ---------- WordPress additions ---------- */
+/* Neutralise theme defaults (Blocksy and others) inside our components. */
+.se .se-table { border: 0; margin: 0; }
+.se .se-table th, .se .se-table td { border: 0; border-bottom: 1px solid var(--line); }
+.se .se-table tbody tr:last-child td, .se .se-table tbody tr:last-child th { border-bottom: 0; }
+.se .se-facts dt { font-weight: 400; }
+.se .se-rating-field { border: 0; padding: 0; margin: 0 0 var(--space-4); min-width: 0; }
+.se .se-rating-field legend { padding: 0; margin: 0 0 6px; float: none; }
+.se-form > .se-field:first-of-type { margin-top: 0; }
 .se-ranked-head { flex-wrap: wrap; }
 .se-ranked-name { flex: 1 1 180px; min-width: 0; }
 .se-block { margin-block: var(--space-6); container-type: inline-size; }
@@ -342,8 +350,6 @@
 .se-form-submit .se-small { max-width: 420px; }
 .se-check { display: flex; gap: 8px; align-items: center; }
 .se-input:focus { outline: 2px solid var(--brand); outline-offset: 1px; border-color: var(--brand); }
-.se-rating-field { border: 0; padding: 0; margin: 0; }
-.se-rating-field legend { padding: 0; margin-bottom: 6px; }
 .se-star-radio { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; color: var(--star); }
 .se-star-radio input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .se-star-radio label { cursor: pointer; padding: 2px; border-radius: var(--radius-sm); }
