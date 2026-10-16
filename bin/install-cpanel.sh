@@ -99,7 +99,7 @@ SALTS="$(curl -fsSL https://api.wordpress.org/secret-key/1.1/salt/)"
 DB_NAME="$DB_NAME" DB_USER="$DB_USER" DB_PASS="$DB_PASS" SALTS="$SALTS" php -r '
 	$c = file_get_contents($argv[1] . "/wp-config-sample.php");
 	$c = str_replace(array("database_name_here", "username_here", "password_here"), array(getenv("DB_NAME"), getenv("DB_USER"), getenv("DB_PASS")), $c);
-	$c = preg_replace("/define\(\s*.AUTH_KEY.*?define\(\s*.NONCE_SALT[^;]*;/s", getenv("SALTS"), $c);
+	$c = preg_replace_callback("/define\(\s*.AUTH_KEY.*?define\(\s*.NONCE_SALT[^;]*;/s", function () { return getenv("SALTS"); }, $c);
 	$c = str_replace("/* Add any custom values between this line and the \"stop editing\" line. */", "/* Add any custom values between this line and the \"stop editing\" line. */\ndefine( \"DISALLOW_FILE_EDIT\", true );", $c);
 	file_put_contents($argv[1] . "/wp-config.php", $c);
 ' "$DOCROOT"
