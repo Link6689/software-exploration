@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SE_THEME_VERSION', '0.1.2' );
+define( 'SE_THEME_VERSION', '0.1.3' );
 
 function se_theme_asset( $path ) {
 	return get_stylesheet_directory_uri() . '/assets/' . $path;
@@ -125,5 +125,37 @@ add_action(
 		if ( $html ) {
 			echo '<div class="se se-block se-b-verdict-box se-sidebar-verdict">' . $html . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built by the plugin's escaped renderers.
 		}
+	}
+);
+
+/**
+ * Footer pages, by slug in each language. Missing or unpublished pages are skipped,
+ * so a page can be created later without touching the code.
+ */
+function se_theme_footer_pages() {
+	$pages = array(
+		'en' => array( 'contact' => 'Contact', 'legal-notice' => 'Legal notice' ),
+		'fr' => array( 'nous-contacter' => 'Contact', 'mentions-legales' => 'Mentions légales' ),
+	);
+	$lang = function_exists( 'pll_current_language' ) && 'fr' === pll_current_language( 'slug' ) ? 'fr' : 'en';
+	$out  = array();
+	foreach ( $pages[ $lang ] as $slug => $label ) {
+		$page = get_page_by_path( $slug );
+		if ( $page && 'publish' === $page->post_status ) {
+			$out[] = '<a href="' . esc_url( get_permalink( $page ) ) . '">' . esc_html( $label ) . '</a>';
+		}
+	}
+	return $out;
+}
+
+/** Footer line: "© year Software Exploration · Contact · Legal notice", instead of Blocksy's theme credit. */
+add_filter(
+	'blocksy:footer:copyright:value',
+	function () {
+		$links = se_theme_footer_pages();
+		if ( function_exists( 'se_consent_link' ) && se_consent_link() ) {
+			$links[] = se_consent_link();
+		}
+		return implode( ' · ', array_merge( array( '© {current_year} {site_title}' ), $links ) );
 	}
 );

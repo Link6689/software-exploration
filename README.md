@@ -89,7 +89,13 @@ Formats des champs texte des blocs :
 - **Comparison table → Extra rows** : `Libellé EN | Libellé FR | valeur 1 | valeur 2 …` ; valeurs `yes`, `no`, `score:8.5` ou du texte ; titre de groupe : `## Groupe EN | Groupe FR`.
 - **Category tiles** : `Nom | sous-titre | icône | URL | featured`.
 
-### 3. Avis des lecteurs
+### 3. Contact, mentions légales et cookies
+
+- **Formulaire de contact** : bloc *Contact form* (catégorie Software Exploration). Les messages partent par e-mail à l’adresse d’administration du site (*Réglages → Général*), rien n’est stocké. Anti-spam sans captcha : champ piège invisible, délai minimal avant envoi, 5 messages par heure et par adresse IP. Autre destinataire : filtre `se_contact_to`.
+- **Pied de page** : le thème remplace le crédit Blocksy par « © année Software Exploration · Contact · Mentions légales ». Les liens pointent vers les pages de slug `contact` / `legal-notice` (EN) et `nous-contacter` / `mentions-legales` (FR), s’ils sont publiés.
+- **Google Analytics 4 et bandeau cookies** : définir l’identifiant de mesure, par exemple dans `wp-config.php` : `define( 'SE_GA4_ID', 'G-XXXXXXXXXX' );` (ou le filtre `se_ga4_id`). Le bandeau s’affiche alors, GA4 ne se charge qu’après « Accepter » (cookies limités à 13 mois), le choix est gardé 6 mois et un lien « Gérer les cookies » s’ajoute au pied de page. Sans identifiant, ni bandeau ni GA4. Ne pas ajouter GA4 par un autre plugin en plus.
+
+### 4. Avis des lecteurs
 
 Sur un test (une page contenant un bloc *Verdict box*), le formulaire de commentaire demande une note de 1 à 5 étoiles et l’ancienneté d’utilisation. La page affiche la moyenne, la répartition et notre note /10 à côté (jamais mélangées). Les réponses d’un membre de l’équipe sont signalées par le logo et un badge « Équipe ». À partir de 5 avis approuvés, la note moyenne est ajoutée au balisage `Review`.
 
