@@ -239,11 +239,20 @@ if ( function_exists( 'blocksy_manager' ) ) {
 	set_theme_mod( 'header_placements', $h );
 }
 set_theme_mod( 'single_blog_post_has_comments_website', 'no' );
-flush_rewrite_rules( true );
 echo "ok\n";
 PHP
 say "Langues, pages d'accueil et en-tête"
 wp_php "$TMP/step2.php" >/dev/null
+
+# ---------- step 3: rewrite rules, in a fresh run so Polylang's /fr/ rules are included ----------
+cat > "$TMP/step3.php" <<PHP
+<?php
+define( 'WP_ADMIN', true );
+require '$DOCROOT/wp-load.php';
+flush_rewrite_rules( false );
+echo "ok\n";
+PHP
+wp_php "$TMP/step3.php" >/dev/null
 
 # Pretty permalinks need WordPress's rules in .htaccess (Apache / LiteSpeed).
 if [ ! -f "$DOCROOT/.htaccess" ] || ! grep -q "BEGIN WordPress" "$DOCROOT/.htaccess"; then
