@@ -6,14 +6,15 @@
  * reopens the banner. The banner is static HTML and the choice is read in the
  * browser, so it works with page caching.
  *
- * Nothing is printed until a GA4 measurement ID is set (SE_GA4_ID constant or
- * the `se_ga4_id` filter): with no tracker, no banner is needed.
+ * Nothing is printed when the GA4 measurement ID is empty (SE_GA4_ID constant
+ * or the `se_ga4_id` filter): with no tracker, no banner is needed.
  */
 
 defined( 'ABSPATH' ) || exit;
 
+/** The site's GA4 property. SE_GA4_ID or the se_ga4_id filter override it; '' turns GA4 and the banner off. */
 function se_ga4_id() {
-	$id = apply_filters( 'se_ga4_id', defined( 'SE_GA4_ID' ) ? SE_GA4_ID : '' );
+	$id = apply_filters( 'se_ga4_id', defined( 'SE_GA4_ID' ) ? SE_GA4_ID : 'G-JBFLR7N2NH' );
 	return preg_match( '/^G-[A-Z0-9]{4,16}$/', (string) $id ) ? $id : '';
 }
 
