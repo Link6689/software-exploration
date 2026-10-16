@@ -43,6 +43,7 @@ else
 	curl -fsSL -o "$HOME/.se-tools/wp-cli.phar" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 	WP=(php "$HOME/.se-tools/wp-cli.phar")
 fi
+[ "$(id -u)" = "0" ] && WP+=(--allow-root)
 wp() { "${WP[@]}" --path="$DOCROOT" "$@"; }
 
 # ---------- database ----------
