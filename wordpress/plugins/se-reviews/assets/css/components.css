@@ -197,7 +197,7 @@
 .se-meta b { color: var(--ink); font-weight: 600; }
 
 /* Disclosure */
-.se-disclosure { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--surface-sunk); font-size: 13px; line-height: 19px; color: var(--ink-muted); }
+.se-disclosure { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line); font-size: 13px; line-height: 19px; color: var(--ink-muted); }
 
 /* FAQ */
 .se-faq { border-top: 1px solid var(--line); }

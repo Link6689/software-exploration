@@ -102,6 +102,12 @@ body.se-site,
 .se-site .ct-sidebar:has(> .se-sidebar-verdict) { position: sticky; top: calc(var(--admin-bar, 0px) + var(--space-5)); }
 .se-site .se-sidebar-verdict { margin-block: 0 var(--space-5); }
 
+/* Boxes from the wwc library in articles: white cards on the paper background, like ours, with a coloured edge by type. */
+.se-site .wwc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); }
+.se-site .wwc.wwc-info { border-left: 4px solid var(--brand); }
+.se-site .wwc.wwc-tip { border-left: 4px solid var(--pro); }
+.se-site .wwc.wwc-warning { border-left: 4px solid var(--cta); }
+
 /* Header: wordmark shortcode and language switch */
 .se-site .se-wordmark { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 21px; line-height: 1; color: var(--ink); text-decoration: none; white-space: nowrap; }
 .se-site .se-wm-txt > span { color: var(--brand); }

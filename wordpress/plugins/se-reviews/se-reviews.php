@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Software Exploration Reviews
  * Description:       Tools, scores, review blocks, comparison tables, deals, reader ratings and /go/ affiliate links for software-exploration.com.
- * Version:           0.1.2
+ * Version:           0.1.3
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Software Exploration
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SE_REVIEWS_VERSION', '0.1.2' );
+define( 'SE_REVIEWS_VERSION', '0.1.3' );
 define( 'SE_REVIEWS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SE_REVIEWS_URL', plugin_dir_url( __FILE__ ) );
 

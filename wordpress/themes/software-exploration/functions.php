@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SE_THEME_VERSION', '0.1.1' );
+define( 'SE_THEME_VERSION', '0.1.2' );
 
 function se_theme_asset( $path ) {
 	return get_stylesheet_directory_uri() . '/assets/' . $path;
