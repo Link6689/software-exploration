@@ -138,6 +138,17 @@ foreach ( $sections as $pair ) {
 	pll_save_post_translations( $ids );
 }
 
+// The first installer linked the French home tiles to /fr/seo/ and /fr/marketing/.
+$fr_home = pll_get_post( (int) get_option( 'page_on_front' ), 'fr' );
+if ( $fr_home ) {
+	$content = get_post_field( 'post_content', $fr_home );
+	$fixed   = strtr( $content, array( '| /fr/seo/ |' => '| /fr/referencement/ |', '| /fr/marketing/ |' => '| /fr/marketing-digital/ |', '\/fr\/seo\/' => '\/fr\/referencement\/', '\/fr\/marketing\/' => '\/fr\/marketing-digital\/' ) );
+	if ( $fixed !== $content ) {
+		wp_update_post( array( 'ID' => $fr_home, 'post_content' => wp_slash( $fixed ) ) );
+		echo "liens de l'accueil FR corrigés\n";
+	}
+}
+
 // Menus.
 $labels = array(
 	'en' => array( 'AI', 'SEO', 'Marketing', 'Comparisons', 'Alternatives', 'Deals', 'Guides' ),
