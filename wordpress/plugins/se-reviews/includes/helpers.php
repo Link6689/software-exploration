@@ -200,3 +200,19 @@ function se_method_url() {
 function se_site_url( $path = '' ) {
 	return trailingslashit( get_option( 'home' ) ) . ltrim( $path, '/' );
 }
+
+/**
+ * French tagline while it is untranslated in Polylang (Languages → Translations):
+ * the home page title is "Site name – Tagline". A translation entered in
+ * Polylang replaces the English text, so it wins over this one.
+ */
+add_filter(
+	'option_blogdescription',
+	function ( $tagline ) {
+		if ( 'Hands-on software reviews' === $tagline && ! is_admin() && 'fr' === se_lang() ) {
+			return 'Tests de logiciels en conditions réelles';
+		}
+		return $tagline;
+	},
+	20
+);

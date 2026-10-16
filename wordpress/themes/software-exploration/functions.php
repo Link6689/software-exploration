@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SE_THEME_VERSION', '0.1.0' );
+define( 'SE_THEME_VERSION', '0.1.3' );
 
 function se_theme_asset( $path ) {
 	return get_stylesheet_directory_uri() . '/assets/' . $path;
@@ -73,5 +73,89 @@ add_filter(
 			$classes[] = 'se-has-meta';
 		}
 		return $classes;
+	}
+);
+
+/** Tool of a review: the one picked in the first se/verdict-box block of the post, or 0. */
+function se_theme_review_tool_id( $post = null ) {
+	$post = get_post( $post );
+	if ( ! $post || 'post' !== $post->post_type || ! has_block( 'se/verdict-box', $post ) ) {
+		return 0;
+	}
+	foreach ( parse_blocks( $post->post_content ) as $block ) {
+		if ( 'se/verdict-box' === $block['blockName'] && ! empty( $block['attrs']['toolId'] ) ) {
+			return (int) $block['attrs']['toolId'];
+		}
+	}
+	return 0;
+}
+
+/**
+ * Reviews get a right sidebar instead of Blocksy's narrow single-post column.
+ * Only when the post keeps "Inherit from customizer": Blocksy returns a
+ * per-post choice before this filter runs.
+ */
+add_filter(
+	'blocksy:global:page_structure',
+	function ( $structure ) {
+		return is_singular( 'post' ) && se_theme_review_tool_id() ? 'type-1' : $structure;
+	}
+);
+
+/** On a review the sidebar holds the verdict box alone: default widgets would push it out of view. */
+add_filter(
+	'sidebars_widgets',
+	function ( $widgets ) {
+		if ( ! is_admin() && is_singular( 'post' ) && se_theme_review_tool_id() ) {
+			$widgets['sidebar-1'] = array();
+		}
+		return $widgets;
+	}
+);
+
+/** That sidebar: the compact verdict box (score, price, affiliate button), kept in view while scrolling. */
+add_action(
+	'blocksy:sidebar:start',
+	function () {
+		$tool_id = is_singular( 'post' ) ? se_theme_review_tool_id() : 0;
+		if ( ! $tool_id || ! function_exists( 'se_render_block' ) ) {
+			return;
+		}
+		$html = se_render_block( 'verdict-box', array( 'toolId' => $tool_id, 'compact' => true ) );
+		if ( $html ) {
+			echo '<div class="se se-block se-b-verdict-box se-sidebar-verdict">' . $html . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built by the plugin's escaped renderers.
+		}
+	}
+);
+
+/**
+ * Footer pages, by slug in each language. Missing or unpublished pages are skipped,
+ * so a page can be created later without touching the code.
+ */
+function se_theme_footer_pages() {
+	$pages = array(
+		'en' => array( 'contact' => 'Contact', 'legal-notice' => 'Legal notice' ),
+		'fr' => array( 'nous-contacter' => 'Contact', 'mentions-legales' => 'Mentions légales' ),
+	);
+	$lang = function_exists( 'pll_current_language' ) && 'fr' === pll_current_language( 'slug' ) ? 'fr' : 'en';
+	$out  = array();
+	foreach ( $pages[ $lang ] as $slug => $label ) {
+		$page = get_page_by_path( $slug );
+		if ( $page && 'publish' === $page->post_status ) {
+			$out[] = '<a href="' . esc_url( get_permalink( $page ) ) . '">' . esc_html( $label ) . '</a>';
+		}
+	}
+	return $out;
+}
+
+/** Footer line: "© year Software Exploration · Contact · Legal notice", instead of Blocksy's theme credit. */
+add_filter(
+	'blocksy:footer:copyright:value',
+	function () {
+		$links = se_theme_footer_pages();
+		if ( function_exists( 'se_consent_link' ) && se_consent_link() ) {
+			$links[] = se_consent_link();
+		}
+		return implode( ' · ', array_merge( array( '© {current_year} {site_title}' ), $links ) );
 	}
 );
