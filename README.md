@@ -14,7 +14,20 @@ Ce dépôt contient :
 
 Le design system complet (gabarits, composants, règles) est publié en artefact : https://claude.ai/artifact/XS77mUvtDqYGtzGuc1pa25
 
-## Installation
+## Installation en une commande (cPanel)
+
+1. Dans cPanel → **Domaines**, ajouter `software-exploration.com` (s’il n’y est pas déjà).
+2. Ouvrir cPanel → **Terminal** et coller :
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Link6689/software-exploration/main/bin/install-cpanel.sh | bash -s -- software-exploration.com votre@email.fr
+```
+
+Le script crée la base de données, installe WordPress, Blocksy, Blocksy Companion, Polylang, le thème enfant et le plugin, règle les langues (anglais à la racine, français sous `/fr/`), les permaliens, la modération des commentaires, l’en-tête Blocksy et crée les pages d’accueil EN et FR. Il affiche à la fin l’identifiant et le mot de passe administrateur. S’il trouve déjà un WordPress dans le dossier du domaine, il s’arrête sans rien modifier.
+
+Restent à faire à la main : les menus EN et FR, et masquer « Méta de l’article » (voir *Réglages Blocksy* ci-dessous).
+
+## Installation manuelle
 
 1. **WordPress** 6.5 ou plus récent, PHP 7.4 ou plus.
 2. Installer et activer le thème **Blocksy** (gratuit) depuis *Apparence → Thèmes → Ajouter*.
