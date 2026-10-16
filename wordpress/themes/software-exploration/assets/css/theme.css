@@ -95,6 +95,9 @@ body.se-site,
 .se-site .wp-block-button__link,
 .se-site .wp-element-button { border-radius: var(--radius-md); font: 600 15px/22px var(--font-sans); padding: 10px 18px; }
 
+/* Blocksy's own meta line duplicates the "Author and dates" block. */
+.se-has-meta .hero-section .entry-meta { display: none; }
+
 /* Header: wordmark shortcode and language switch */
 .se-site .se-wordmark { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 21px; line-height: 1; color: var(--ink); text-decoration: none; white-space: nowrap; }
 .se-site .se-wm-txt > span { color: var(--brand); }

@@ -68,6 +68,10 @@ add_filter(
 	'body_class',
 	function ( $classes ) {
 		$classes[] = 'se-site';
+		// Posts built from our patterns carry their own author/date line: hide Blocksy's.
+		if ( is_singular() && has_block( 'se/meta-line' ) ) {
+			$classes[] = 'se-has-meta';
+		}
 		return $classes;
 	}
 );
