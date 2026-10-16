@@ -6,6 +6,9 @@
 # Run it from cPanel → Terminal (the domain must already be added in cPanel → Domains):
 #   curl -fsSL https://raw.githubusercontent.com/Link6689/software-exploration/main/bin/install-cpanel.sh | bash -s -- software-exploration.com you@example.com
 #
+# It only needs curl, tar, unzip (or PHP's zip extension) and the account's PHP:
+# no WP-CLI, which crashes on some shared hosts.
+#
 # Optional environment variables:
 #   SE_BRANCH   branch of the repository to install from (default: main)
 #   SE_DOCROOT  document root, if it cannot be read from cPanel
@@ -21,9 +24,11 @@ say() { printf '\n\033[1;32m==> %s\033[0m\n' "$*"; }
 die() { printf '\n\033[1;31mErreur : %s\033[0m\n' "$*" >&2; exit 1; }
 rand() { LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c "$1" || true; }
 json() { php -r '$j = json_decode(stream_get_contents(STDIN), true); $v = $j; foreach (explode(".", $argv[1]) as $k) { $v = is_array($v) && array_key_exists($k, $v) ? $v[$k] : ""; } echo is_scalar($v) ? $v : json_encode($v);' "$1"; }
+trap 'printf "\n\033[1;31mL’installation s’est arrêtée (ligne %s). Copiez ce message à Claude.\033[0m\n" "$LINENO" >&2' ERR
 
 [ -n "$DOMAIN" ] && [ -n "$EMAIL" ] || die "usage : bash install-cpanel.sh <domaine> <email-admin>"
 command -v php >/dev/null || die "php introuvable dans le terminal."
+command -v curl >/dev/null || die "curl introuvable dans le terminal."
 
 # ---------- document root ----------
 DOCROOT="${SE_DOCROOT:-}"
@@ -35,16 +40,24 @@ mkdir -p "$DOCROOT"
 [ -f "$DOCROOT/wp-config.php" ] && die "WordPress est déjà installé dans $DOCROOT. Rien n'a été modifié."
 say "Installation dans $DOCROOT"
 
-# ---------- WP-CLI ----------
-if command -v wp >/dev/null; then
-	WP=(wp)
-else
-	mkdir -p "$HOME/.se-tools"
-	curl -fsSL -o "$HOME/.se-tools/wp-cli.phar" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-	WP=(php "$HOME/.se-tools/wp-cli.phar")
-fi
-[ "$(id -u)" = "0" ] && WP+=(--allow-root)
-wp() { "${WP[@]}" --path="$DOCROOT" "$@"; }
+TMP="$(mktemp -d)"
+cleanup() { rm -rf "$TMP"; }
+trap cleanup EXIT
+
+# Unzip a .zip into a directory (unzip if present, PHP's ZipArchive otherwise).
+extract_zip() {
+	if command -v unzip >/dev/null; then
+		unzip -qo "$1" -d "$2"
+	else
+		php -r '$z = new ZipArchive(); if ($z->open($argv[1]) !== true) { exit(1); } $z->extractTo($argv[2]); $z->close();' "$1" "$2"
+	fi
+}
+# Download a theme or plugin from wordpress.org into wp-content.
+wporg() {
+	curl -fsSL -o "$TMP/$2.zip" "https://downloads.wordpress.org/$1/$2.latest-stable.zip" \
+		|| curl -fsSL -o "$TMP/$2.zip" "https://downloads.wordpress.org/$1/$2.zip"
+	extract_zip "$TMP/$2.zip" "$DOCROOT/wp-content/$1s/"
+}
 
 # ---------- database ----------
 DB_NAME="${SE_DB_NAME:-}"
@@ -63,41 +76,82 @@ if [ -z "$DB_NAME" ]; then
 	[ "$(uapi --output=json Mysql set_privileges_on_database user="$DB_USER" database="$DB_NAME" privileges='ALL PRIVILEGES' | json result.status)" = "1" ] || die "droits MySQL impossibles à attribuer."
 fi
 
-# ---------- WordPress ----------
+# ---------- files ----------
 say "Téléchargement de WordPress"
-wp core download --locale=en_US --skip-content --force >/dev/null
-mkdir -p "$DOCROOT/wp-content/themes" "$DOCROOT/wp-content/plugins"
-wp config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost=localhost --skip-check >/dev/null
-ADMIN_USER="se-admin"
-ADMIN_PASS="$(rand 20)"
-wp core install --url="https://$DOMAIN" --title="Software Exploration" --admin_user="$ADMIN_USER" --admin_password="$ADMIN_PASS" --admin_email="$EMAIL" --skip-email >/dev/null
+curl -fsSL https://wordpress.org/latest.tar.gz | tar xz -C "$DOCROOT" --strip-components=1
 
 say "Blocksy, Blocksy Companion et Polylang"
-wp theme install blocksy >/dev/null
-wp plugin install blocksy-companion polylang --activate >/dev/null
+wporg theme blocksy
+wporg plugin blocksy-companion
+wporg plugin polylang
 
 say "Thème et plugin Software Exploration ($REPO, branche $BRANCH)"
-TMP="$(mktemp -d)"
 curl -fsSL "https://codeload.github.com/$REPO/tar.gz/refs/heads/$BRANCH" | tar xz -C "$TMP"
-SRC="$(find "$TMP" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-[ -d "$SRC/wordpress/plugins/se-reviews" ] || die "archive du dépôt incomplète (branche $BRANCH)."
+SRC="$(find "$TMP" -mindepth 1 -maxdepth 1 -type d -name 'software-exploration-*' | head -n 1)"
+[ -n "$SRC" ] && [ -d "$SRC/wordpress/plugins/se-reviews" ] || die "archive du dépôt incomplète (branche $BRANCH)."
 rm -rf "$DOCROOT/wp-content/plugins/se-reviews" "$DOCROOT/wp-content/themes/software-exploration"
 cp -R "$SRC/wordpress/plugins/se-reviews" "$DOCROOT/wp-content/plugins/"
 cp -R "$SRC/wordpress/themes/software-exploration" "$DOCROOT/wp-content/themes/"
-rm -rf "$TMP"
-wp theme activate software-exploration >/dev/null
-wp plugin activate se-reviews >/dev/null
 
-say "Réglages : langues, permaliens, commentaires, en-tête"
-wp rewrite structure '/%postname%/' >/dev/null
-wp option update comment_moderation 1 >/dev/null
-wp option update comment_max_links 1 >/dev/null
-wp option update show_avatars 0 >/dev/null
-wp option update blogdescription "Hands-on software reviews" >/dev/null
+# ---------- wp-config.php ----------
+say "Configuration"
+SALTS="$(curl -fsSL https://api.wordpress.org/secret-key/1.1/salt/)"
+DB_NAME="$DB_NAME" DB_USER="$DB_USER" DB_PASS="$DB_PASS" SALTS="$SALTS" php -r '
+	$c = file_get_contents($argv[1] . "/wp-config-sample.php");
+	$c = str_replace(array("database_name_here", "username_here", "password_here"), array(getenv("DB_NAME"), getenv("DB_USER"), getenv("DB_PASS")), $c);
+	$c = preg_replace("/define\(\s*.AUTH_KEY.*?define\(\s*.NONCE_SALT[^;]*;/s", getenv("SALTS"), $c);
+	$c = str_replace("/* Add any custom values between this line and the \"stop editing\" line. */", "/* Add any custom values between this line and the \"stop editing\" line. */\ndefine( \"DISALLOW_FILE_EDIT\", true );", $c);
+	file_put_contents($argv[1] . "/wp-config.php", $c);
+' "$DOCROOT"
+chmod 640 "$DOCROOT/wp-config.php" 2>/dev/null || true
 
-SETUP="$(mktemp --suffix=.php)"
-cat > "$SETUP" <<'PHP'
+# Runs a PHP file with WordPress loaded, as if the page were requested on the domain.
+wp_php() {
+	DOMAIN="$DOMAIN" php -d memory_limit=512M -r '
+		$_SERVER["HTTP_HOST"] = getenv("DOMAIN"); $_SERVER["SERVER_NAME"] = getenv("DOMAIN");
+		$_SERVER["HTTPS"] = "on"; $_SERVER["SERVER_PORT"] = 443; $_SERVER["REQUEST_URI"] = "/"; $_SERVER["REQUEST_METHOD"] = "GET";
+		$_SERVER["SCRIPT_NAME"] = "/index.php"; $_SERVER["PHP_SELF"] = "/index.php"; $_SERVER["REMOTE_ADDR"] = "127.0.0.1";
+		require $argv[1];' "$1"
+}
+
+# ---------- step 1: install WordPress, activate theme and plugins ----------
+ADMIN_USER="se-admin"
+ADMIN_PASS="$(rand 20)"
+cat > "$TMP/step1.php" <<PHP
 <?php
+define( 'WP_INSTALLING', true );
+require '$DOCROOT/wp-load.php';
+require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+require_once ABSPATH . 'wp-admin/includes/plugin.php';
+if ( ! is_blog_installed() ) {
+	wp_install( 'Software Exploration', '$ADMIN_USER', '$EMAIL', 1, '', '$ADMIN_PASS', 'en_US' );
+}
+update_option( 'siteurl', 'https://$DOMAIN' );
+update_option( 'home', 'https://$DOMAIN' );
+update_option( 'blogdescription', 'Hands-on software reviews' );
+update_option( 'permalink_structure', '/%postname%/' );
+update_option( 'comment_moderation', 1 );
+update_option( 'comment_max_links', 1 );
+update_option( 'show_avatars', 0 );
+switch_theme( 'software-exploration' );
+foreach ( array( 'polylang/polylang.php', 'blocksy-companion/blocksy-companion.php', 'se-reviews/se-reviews.php' ) as \$plugin ) {
+	\$r = activate_plugin( \$plugin );
+	if ( is_wp_error( \$r ) ) {
+		fwrite( STDERR, \$plugin . ' : ' . \$r->get_error_message() . "\n" );
+		exit( 1 );
+	}
+}
+echo "ok\n";
+PHP
+say "Installation de WordPress"
+wp_php "$TMP/step1.php" >/dev/null
+
+# ---------- step 2: languages, home pages, Blocksy header ----------
+cat > "$TMP/step2.php" <<PHP
+<?php
+require '$DOCROOT/wp-load.php';
+PHP
+cat >> "$TMP/step2.php" <<'PHP'
 // Remove the default sample content.
 foreach ( get_posts( array( 'post_type' => array( 'post', 'page' ), 'post_status' => 'any', 'numberposts' => -1 ) ) as $p ) {
 	wp_delete_post( $p->ID, true );
@@ -181,12 +235,28 @@ if ( function_exists( 'blocksy_manager' ) ) {
 	set_theme_mod( 'header_placements', $h );
 }
 set_theme_mod( 'single_blog_post_has_comments_website', 'no' );
-flush_rewrite_rules();
+flush_rewrite_rules( true );
 echo "ok\n";
 PHP
-wp eval-file "$SETUP" >/dev/null
-rm -f "$SETUP"
-wp rewrite flush >/dev/null
+say "Langues, pages d'accueil et en-tête"
+wp_php "$TMP/step2.php" >/dev/null
+
+# Pretty permalinks need WordPress's rules in .htaccess (Apache / LiteSpeed).
+if [ ! -f "$DOCROOT/.htaccess" ] || ! grep -q "BEGIN WordPress" "$DOCROOT/.htaccess"; then
+	cat >> "$DOCROOT/.htaccess" <<'HTACCESS'
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+HTACCESS
+fi
 
 cat <<EOF
 
