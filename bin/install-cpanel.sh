@@ -117,13 +117,26 @@ $opt['hide_default'] = true;
 $opt['force_lang']   = 1;
 $opt['rewrite']      = true;
 $opt['browser']      = false;
+$opt['redirect_lang'] = 1; // /fr/ itself is the French home page
 update_option( 'polylang', $opt );
 
 // Home pages from the "Home page" pattern, linked as translations.
 $pattern = WP_Block_Patterns_Registry::get_instance()->get_registered( 'se/home' );
 $homes   = array();
+$fr_text = array(
+	'Hands-on reviews, rankings and comparisons of AI, SEO and marketing tools.' => 'Tests, classements et comparatifs d’outils IA, SEO et marketing, en conditions réelles.',
+	'>Browse by category<'          => '>Explorer par catégorie<',
+	'>The best AI tools right now<' => '>Les meilleurs outils IA du moment<',
+	'>Latest reviews<'              => '>Derniers avis<',
+	'>Deals of the month<'          => '>Bons plans du mois<',
+	'>Guides and tutorials<'        => '>Guides et tutoriels<',
+);
 foreach ( array( 'en' => array( 'Find the right software. We tested it first.', 'home' ), 'fr' => array( 'Trouvez le bon logiciel. On l’a testé avant vous.', 'accueil' ) ) as $lang => $page ) {
-	$id = wp_insert_post( array( 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $page[0], 'post_name' => $page[1], 'post_content' => wp_slash( $pattern ? $pattern['content'] : '' ), 'comment_status' => 'closed' ) );
+	$content = $pattern ? $pattern['content'] : '';
+	if ( 'fr' === $lang ) {
+		$content = strtr( $content, $fr_text );
+	}
+	$id = wp_insert_post( array( 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $page[0], 'post_name' => $page[1], 'post_content' => wp_slash( $content ), 'comment_status' => 'closed' ) );
 	pll_set_post_language( $id, $lang );
 	$homes[ $lang ] = $id;
 }
