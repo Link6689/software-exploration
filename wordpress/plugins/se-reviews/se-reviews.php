@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Software Exploration Reviews
  * Description:       Tools, scores, review blocks, comparison tables, deals, reader ratings and /go/ affiliate links for software-exploration.com.
- * Version:           0.1.5
+ * Version:           0.1.6
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Software Exploration
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SE_REVIEWS_VERSION', '0.1.5' );
+define( 'SE_REVIEWS_VERSION', '0.1.6' );
 define( 'SE_REVIEWS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SE_REVIEWS_URL', plugin_dir_url( __FILE__ ) );
 
@@ -26,6 +26,7 @@ require_once SE_REVIEWS_DIR . 'includes/patterns.php';
 require_once SE_REVIEWS_DIR . 'includes/shortcodes.php';
 require_once SE_REVIEWS_DIR . 'includes/contact.php';
 require_once SE_REVIEWS_DIR . 'includes/consent.php';
+require_once SE_REVIEWS_DIR . 'includes/robots.php';
 
 /**
  * Styles for blocks, comments and patterns. `enqueue_block_assets` reaches both
