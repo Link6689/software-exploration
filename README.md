@@ -44,7 +44,7 @@ Restent à faire à la main : les menus EN et FR, et masquer « Méta de l’art
 ### Réglages Blocksy
 
 - *Personnaliser → Couleurs → Palette globale* (le thème force déjà ces valeurs, les reporter ici aligne l’aperçu du personnalisateur) :
-  1 `#0e5a48` · 2 `#121c18` · 3 `#121c18` · 4 `#121c18` · 5 `#d9d5c8` · 6 `#ebe8de` · 7 `#f5f3ec` · 8 `#ffffff`.
+  1 `#0e5a48` · 2 `#121c18` · 3 `#121c18` · 4 `#121c18` · 5 `#d9d5c8` · 6 `#ebe8de` · 7 `#ffffff` · 8 `#ffffff`.
 - *Typographie* : laisser « Instrument Sans » pour le texte et « Bricolage Grotesque » pour les titres ; les fichiers sont fournis par le thème (aucun appel à Google Fonts, conforme RGPD).
 - *En-tête* (constructeur d’en-tête) :
   - logo : retirer l’élément « Logo » et glisser à sa place un élément **HTML** contenant `[se_wordmark]` (logo + nom, lien vers l’accueil de la langue courante) ;
