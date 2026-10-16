@@ -111,14 +111,22 @@ foreach ( array( array( 'English', 'en', 'en_US', 'gb', 0 ), array( 'Français',
 		call_user_func( $add, array( 'name' => $l[0], 'slug' => $l[1], 'locale' => $l[2], 'rtl' => 0, 'term_group' => $l[4], 'flag' => $l[3] ) );
 	}
 }
-$opt                 = get_option( 'polylang' );
-$opt['default_lang'] = 'en';
-$opt['hide_default'] = true;
-$opt['force_lang']   = 1;
-$opt['rewrite']      = true;
-$opt['browser']      = false;
-$opt['redirect_lang'] = 1; // /fr/ itself is the French home page
-update_option( 'polylang', $opt );
+$pll_options = array(
+	'default_lang'  => 'en',
+	'hide_default'  => true,  // English at the root
+	'force_lang'    => 1,     // French under /fr/
+	'rewrite'       => true,
+	'browser'       => false,
+	'redirect_lang' => true,  // /fr/ itself is the French home page
+);
+if ( is_object( PLL()->options ) && method_exists( PLL()->options, 'set' ) ) {
+	foreach ( $pll_options as $key => $value ) {
+		PLL()->options->set( $key, $value );
+	}
+	PLL()->options->save();
+} else {
+	update_option( 'polylang', array_merge( (array) get_option( 'polylang' ), $pll_options ) );
+}
 
 // Home pages from the "Home page" pattern, linked as translations.
 $pattern = WP_Block_Patterns_Registry::get_instance()->get_registered( 'se/home' );
@@ -143,6 +151,8 @@ foreach ( array( 'en' => array( 'Find the right software. We tested it first.', 
 pll_save_post_translations( $homes );
 update_option( 'show_on_front', 'page' );
 update_option( 'page_on_front', $homes['en'] );
+// Polylang caches each language's home page; rebuild it now that the home pages exist.
+PLL()->model->clean_languages_cache();
 
 // Blocksy header: wordmark on the left, menu + search + EN/FR switch on the right.
 if ( function_exists( 'blocksy_manager' ) ) {
