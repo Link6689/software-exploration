@@ -29,9 +29,16 @@ function se_lang() {
 	return apply_filters( 'se_lang', 'fr' === $lang ? 'fr' : 'en' );
 }
 
-/** Pick the English or French string for the current language. */
+/**
+ * Pick the English or French string for the current language, falling back
+ * to the other language when the field is empty (content may be written in
+ * either language first).
+ */
 function se_l( $en, $fr ) {
-	return 'fr' === se_lang() ? ( '' !== (string) $fr ? $fr : $en ) : $en;
+	if ( 'fr' === se_lang() ) {
+		return '' !== (string) $fr ? $fr : $en;
+	}
+	return '' !== (string) $en ? $en : $fr;
 }
 
 /** Interface labels in both languages. `{n}` is replaced by $name. */
