@@ -9,6 +9,9 @@
 #     translations: AI, SEO, Marketing, Comparisons, Alternatives, Deals, Guides.
 #  3. Creates the "Main EN" and "Main FR" menus and puts them in the
 #     Blocksy header (desktop and mobile) for each language.
+#  4. Polylang: syncs categories, featured image and comment status between
+#     translations, shares media across languages, and creates the AI / SEO /
+#     Marketing categories and their sub-categories in EN and FR.
 #
 # Run it from cPanel → Terminal:
 #   curl -fsSL https://raw.githubusercontent.com/Link6689/software-exploration/main/bin/setup-site.sh | bash -s -- software-exploration.com
@@ -136,6 +139,70 @@ foreach ( $sections as $pair ) {
 		$menu_pages[ $lang ][] = $id;
 	}
 	pll_save_post_translations( $ids );
+}
+
+// Polylang: sync categories, featured image, comment status… between translations; share media across languages.
+$sync = array( 'taxonomies', 'comment_status', 'ping_status', 'post_format', '_thumbnail_id', 'post_parent', '_wp_page_template', 'menu_order' );
+if ( is_object( PLL()->options ) && method_exists( PLL()->options, 'set' ) ) {
+	PLL()->options->set( 'sync', $sync );
+	PLL()->options->set( 'media_support', false );
+	PLL()->options->save();
+} else {
+	$opt                  = get_option( 'polylang' );
+	$opt['sync']          = $sync;
+	$opt['media_support'] = false;
+	update_option( 'polylang', $opt );
+}
+echo "réglages Polylang : synchronisation et médias partagés\n";
+
+// Categories, EN and FR, linked as translations: array( EN slug, EN name, FR slug, FR name, children ).
+$categories = array(
+	array( 'ai', 'AI', 'ia', 'Intelligence artificielle', array(
+		array( 'ai-writing', 'AI writing', 'redaction-ia', 'Rédaction IA' ),
+		array( 'ai-images', 'AI images', 'images-ia', 'Images IA' ),
+		array( 'ai-video', 'AI video', 'video-ia', 'Vidéo IA' ),
+		array( 'chatbots', 'Chatbots', 'chatbots-ia', 'Chatbots IA' ),
+	) ),
+	array( 'seo', 'SEO', 'referencement', 'Référencement SEO', array(
+		array( 'keyword-research', 'Keyword research', 'recherche-mots-cles', 'Recherche de mots-clés' ),
+		array( 'rank-tracking', 'Rank tracking', 'suivi-positions', 'Suivi de positions' ),
+		array( 'site-audit', 'Site audit', 'audit-seo', 'Audit SEO' ),
+		array( 'link-building', 'Link building', 'netlinking', 'Netlinking' ),
+	) ),
+	array( 'marketing', 'Marketing', 'marketing-digital', 'Marketing digital', array(
+		array( 'email-marketing', 'Email marketing', 'emailing', 'E-mailing' ),
+		array( 'social-media', 'Social media', 'reseaux-sociaux', 'Réseaux sociaux' ),
+		array( 'ads', 'Ads', 'publicite', 'Publicité' ),
+		array( 'automation', 'Automation', 'automatisation', 'Automatisation' ),
+	) ),
+);
+$term = function ( $slug, $name, $lang, $parent ) {
+	$found = get_terms( array( 'taxonomy' => 'category', 'slug' => $slug, 'hide_empty' => false, 'lang' => '' ) );
+	if ( $found && ! is_wp_error( $found ) ) {
+		return $found[0]->term_id;
+	}
+	$r = wp_insert_term( $name, 'category', array( 'slug' => $slug, 'parent' => $parent ) );
+	if ( is_wp_error( $r ) ) {
+		fwrite( STDERR, "catégorie $slug : " . $r->get_error_message() . "\n" );
+		return 0;
+	}
+	pll_set_term_language( $r['term_id'], $lang );
+	echo "catégorie créée : $name\n";
+	return $r['term_id'];
+};
+foreach ( $categories as $top ) {
+	$en = $term( $top[0], $top[1], 'en', 0 );
+	$fr = $term( $top[2], $top[3], 'fr', 0 );
+	if ( $en && $fr ) {
+		pll_save_term_translations( array( 'en' => $en, 'fr' => $fr ) );
+	}
+	foreach ( $top[4] as $child ) {
+		$cen = $term( $child[0], $child[1], 'en', $en );
+		$cfr = $term( $child[2], $child[3], 'fr', $fr );
+		if ( $cen && $cfr ) {
+			pll_save_term_translations( array( 'en' => $cen, 'fr' => $cfr ) );
+		}
+	}
 }
 
 // The first installer linked the French home tiles to /fr/seo/ and /fr/marketing/.
