@@ -175,6 +175,7 @@ $categories = array(
 		array( 'ads', 'Ads', 'publicite', 'Publicité' ),
 		array( 'automation', 'Automation', 'automatisation', 'Automatisation' ),
 	) ),
+	array( 'gaming', 'Gaming', 'jeux-video', 'Jeux vidéo', array() ),
 );
 $term = function ( $slug, $name, $lang, $parent ) {
 	$found = get_terms( array( 'taxonomy' => 'category', 'slug' => $slug, 'hide_empty' => false, 'lang' => '' ) );
