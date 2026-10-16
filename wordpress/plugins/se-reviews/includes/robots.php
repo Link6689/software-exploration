@@ -31,6 +31,24 @@ add_filter(
 	999
 );
 
+// Rank Math replaces the wp_robots output with its own tag.
+add_filter(
+	'rank_math/frontend/robots',
+	function ( $robots ) {
+		if ( ! se_is_noindex_page() ) {
+			return $robots;
+		}
+		return array(
+			'index'        => 'noindex',
+			'follow'       => 'nofollow',
+			'noarchive'    => 'noarchive',
+			'noimageindex' => 'noimageindex',
+			'nosnippet'    => 'nosnippet',
+		);
+	},
+	999
+);
+
 add_action(
 	'template_redirect',
 	function () {
