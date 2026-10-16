@@ -11,7 +11,7 @@
 #     Blocksy header (desktop and mobile) for each language.
 #  4. Polylang: syncs categories, featured image and comment status between
 #     translations, shares media across languages, and creates the AI / SEO /
-#     Marketing categories and their sub-categories in EN and FR.
+#     Marketing categories and their sub-categories, and Gaming, in EN and FR.
 #
 # Run it from cPanel → Terminal:
 #   curl -fsSL https://raw.githubusercontent.com/Link6689/software-exploration/main/bin/setup-site.sh | bash -s -- software-exploration.com
