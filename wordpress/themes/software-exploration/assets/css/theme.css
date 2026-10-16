@@ -1,0 +1,109 @@
+/*
+ * Software Exploration — theme layer.
+ * Maps Blocksy's variables onto the design tokens (tokens.css, shipped by the
+ * se-reviews plugin) and styles core content: titles, article copy, images,
+ * tables, latest posts. Set the same palette in Customizer → Colors so the
+ * customizer preview matches (values in the repository README).
+ */
+
+/* ---------- Blocksy → tokens ---------- */
+:root:root {
+  --theme-palette-color-1: var(--brand);
+  --theme-palette-color-2: var(--ink);
+  --theme-palette-color-3: var(--ink);
+  --theme-palette-color-4: var(--ink);
+  --theme-palette-color-5: var(--line);
+  --theme-palette-color-6: var(--surface-sunk);
+  --theme-palette-color-7: var(--paper);
+  --theme-palette-color-8: var(--surface);
+  --theme-text-color: var(--ink);
+  --theme-headings-color: var(--ink);
+  --theme-heading-color: var(--ink);
+  --theme-form-field-border-initial-color: var(--line-strong);
+  --theme-form-field-border-focus-color: var(--brand);
+  --theme-form-field-border-radius: var(--radius-sm);
+  --theme-link-initial-color: var(--brand);
+  --theme-link-hover-color: var(--ink);
+  --theme-border-color: var(--line);
+  --theme-button-background-initial-color: var(--brand);
+  --theme-button-background-hover-color: var(--ink);
+  --theme-button-text-initial-color: var(--on-brand);
+  --theme-button-text-hover-color: var(--paper);
+  --theme-font-family: var(--font-sans);
+  --theme-normal-container-max-width: var(--container);
+  --theme-narrow-container-max-width: var(--measure);
+}
+
+/* ---------- base ---------- */
+body.se-site,
+.editor-styles-wrapper {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 28px;
+  -webkit-font-smoothing: antialiased;
+}
+.se-site :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.se-site a { color: var(--brand); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+/* Titles: H1 in the display face, the rest in the text face. */
+.se-site h1,
+.se-site .page-title,
+.editor-styles-wrapper .wp-block-post-title {
+  font-family: var(--font-display);
+  font-size: 42px;
+  line-height: 48px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.se-site .entry-content > h2,
+.editor-styles-wrapper .is-root-container > h2 { font-family: var(--font-sans); font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -0.01em; margin: var(--space-7) 0 var(--space-4); }
+.se-site .entry-content > h3,
+.editor-styles-wrapper .is-root-container > h3 { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 650; margin: var(--space-6) 0 var(--space-3); }
+.se-site .entry-content > h4 { font-size: 17px; line-height: 24px; font-weight: 650; }
+
+/* Article copy */
+.se-site .entry-content > p,
+.se-site .entry-content > ul,
+.se-site .entry-content > ol { font-size: 17px; line-height: 28px; }
+.se-site .entry-content p.se-lede,
+.editor-styles-wrapper p.se-lede { font-size: 19px; line-height: 30px; color: var(--ink-muted); }
+.se-site .entry-content blockquote { border-left: 3px solid var(--lime); padding-left: var(--space-4); margin-left: 0; font-style: normal; }
+
+/* Screenshots */
+.se-site figure.se-shot-frame img,
+.editor-styles-wrapper figure.se-shot-frame img { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface-sunk); }
+.se-site figure figcaption,
+.se-site .wp-element-caption { font-size: 13px; line-height: 19px; color: var(--ink-muted); margin-top: var(--space-2); text-align: left; }
+
+/* Core tables follow the comparison table look */
+.se-site .wp-block-table table { border-collapse: separate; border-spacing: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; font-size: 15px; }
+.se-site .wp-block-table th,
+.se-site .wp-block-table td { border: 0; border-bottom: 1px solid var(--line); padding: var(--space-3) var(--space-4); }
+.se-site .wp-block-table thead th { background: var(--surface-sunk); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* Latest posts as article cards (home "Guides") */
+.se-site .wp-block-latest-posts.se-latest.is-grid { gap: var(--space-5); padding: 0; }
+.se-site .se-latest.is-grid li { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; padding: 0 0 var(--space-5); }
+.se-site .se-latest .wp-block-latest-posts__featured-image { margin: 0 0 var(--space-4); }
+.se-site .se-latest .wp-block-latest-posts__featured-image img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-bottom: 1px solid var(--line); }
+.se-site .se-latest a.wp-block-latest-posts__post-title { display: block; padding: 0 var(--space-5); font-weight: 650; font-size: 17px; line-height: 24px; color: var(--ink); text-decoration: none; }
+
+/* Buttons from core blocks match the design system */
+.se-site .wp-block-button__link,
+.se-site .wp-element-button { border-radius: var(--radius-md); font: 600 15px/22px var(--font-sans); padding: 10px 18px; }
+
+/* Blocksy's own meta line duplicates the "Author and dates" block. */
+.se-has-meta .hero-section .entry-meta { display: none; }
+
+/* Header: wordmark shortcode and language switch */
+.se-site .se-wordmark { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 21px; line-height: 1; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.se-site .se-wm-txt > span { color: var(--brand); }
+
+@media (max-width: 640px) {
+  .se-site h1,
+  .se-site .page-title { font-size: 32px; line-height: 38px; }
+  .se-site .entry-content > h2 { font-size: 24px; line-height: 30px; margin-top: var(--space-6); }
+}
