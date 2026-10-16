@@ -123,6 +123,7 @@ define( 'WP_INSTALLING', true );
 require '$DOCROOT/wp-load.php';
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
+add_filter( 'pre_wp_mail', '__return_false' ); // no "new site" email during the install
 if ( ! is_blog_installed() ) {
 	wp_install( 'Software Exploration', '$ADMIN_USER', '$EMAIL', 1, '', '$ADMIN_PASS', 'en_US' );
 }
@@ -149,7 +150,10 @@ wp_php "$TMP/step1.php" >/dev/null
 # ---------- step 2: languages, home pages, Blocksy header ----------
 cat > "$TMP/step2.php" <<PHP
 <?php
+// Admin context: Polylang only exposes its API there until a language exists.
+define( 'WP_ADMIN', true );
 require '$DOCROOT/wp-load.php';
+require_once ABSPATH . 'wp-admin/includes/admin.php';
 PHP
 cat >> "$TMP/step2.php" <<'PHP'
 // Remove the default sample content.
