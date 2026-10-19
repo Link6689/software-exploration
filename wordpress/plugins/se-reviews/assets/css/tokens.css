@@ -1,0 +1,78 @@
+/* Software Exploration — generated from design/tokens.json by bin/build-tokens.php. Do not edit. */
+
+:root {
+  --paper: #f5f3ec;
+  --surface: #ffffff;
+  --surface-sunk: #ebe8de;
+  --line: #d9d5c8;
+  --line-strong: #8a8f86;
+  --ink: #121c18;
+  --ink-muted: #4f5b55;
+  --brand: #0e5a48;
+  --on-brand: #ffffff;
+  --brand-soft: #d7ebe3;
+  --lime: #c6f05e;
+  --on-lime: #121c18;
+  --logo-ground: #0e5a48;
+  --cta: #c2410c;
+  --on-cta: #ffffff;
+  --star: #b7791f;
+  --pro: #17784a;
+  --con: #b42318;
+  --score-high: #17784a;
+  --score-mid: #a16207;
+  --score-low: #b42318;
+  --on-score: #ffffff;
+  --shadow-card: 0 1px 2px rgba(18,28,24,0.06), 0 4px 16px rgba(18,28,24,0.05);
+  --shadow-pop: 0 12px 32px rgba(18,28,24,0.14);
+}
+
+[data-color-mode="dark"],
+[data-theme="dark"],
+.se-theme-dark {
+  --paper: #0e1412;
+  --surface: #151d1a;
+  --surface-sunk: #1c2622;
+  --line: #2b3833;
+  --line-strong: #5d6b65;
+  --ink: #edf1ec;
+  --ink-muted: #a3aea8;
+  --brand: #5cc8a4;
+  --on-brand: #0b1d17;
+  --brand-soft: #173a30;
+  --lime: #c6f05e;
+  --on-lime: #121c18;
+  --logo-ground: #0e5a48;
+  --cta: #f97a3c;
+  --on-cta: #1a0c04;
+  --star: #f2b33d;
+  --pro: #4fd18b;
+  --con: #ff7a6b;
+  --score-high: #4fd18b;
+  --score-mid: #f2b33d;
+  --score-low: #ff7a6b;
+  --on-score: #0e1412;
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-pop: 0 12px 32px rgba(0,0,0,0.55);
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+  --container: 1200px;
+  --measure: 720px;
+  --sidebar: 320px;
+  --font-display: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
+  --font-sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
