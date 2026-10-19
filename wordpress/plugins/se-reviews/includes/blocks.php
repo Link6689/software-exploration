@@ -108,6 +108,7 @@ function se_blocks_config() {
 			),
 		),
 		'disclosure'       => array( 'title' => 'Affiliate disclosure', 'icon' => 'info-outline', 'desc' => 'Required on any page with an affiliate button.', 'attrs' => array() ),
+		'contact-form'     => array( 'title' => 'Contact form', 'icon' => 'email', 'desc' => 'Name, e-mail, subject and message, sent to the admin e-mail.', 'attrs' => array() ),
 		'meta-line'        => array(
 			'title' => 'Author and dates',
 			'icon'  => 'admin-users',
@@ -357,6 +358,9 @@ function se_render_block( $name, $a ) {
 
 		case 'disclosure':
 			return se_render_disclosure();
+
+		case 'contact-form':
+			return se_render_contact_form();
 
 		case 'meta-line':
 			return $post ? se_render_meta_line( $post, $a['tested'] ) : '';

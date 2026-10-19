@@ -103,7 +103,7 @@ add_action(
 					. $h2( 'The best AI tools right now' ) . $w( 'ranked-list', array( 'compact' => true ) )
 					. $h2( 'Latest reviews' ) . $w( 'tool-grid' )
 					. $h2( 'Deals of the month' ) . $w( 'deal-grid', array( 'limit' => 3 ) )
-					. $h2( 'Guides and tutorials' ) . '<!-- wp:latest-posts {"postsToShow":3,"displayPostContent":false,"displayFeaturedImage":true,"postLayout":"grid","columns":3,"className":"se-latest"} /-->',
+					. $h2( 'Guides and tutorials' ) . '<!-- wp:latest-posts {"postsToShow":3,"displayPostContent":false,"displayFeaturedImage":true,"featuredImageSizeSlug":"medium_large","postLayout":"grid","columns":3,"className":"se-latest"} /-->',
 			),
 		);
 

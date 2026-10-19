@@ -68,7 +68,7 @@ function se_register_tool_post_type() {
 			'rest_base'     => 'se_tool',
 			'menu_icon'     => 'dashicons-awards',
 			'menu_position' => 21,
-			'supports'      => array( 'title', 'thumbnail' ),
+			'supports'      => array( 'title', 'thumbnail', 'custom-fields' ), // custom-fields: needed for the meta to show up in the REST API.
 		)
 	);
 
